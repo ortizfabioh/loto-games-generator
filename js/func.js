@@ -77,11 +77,18 @@ function getValuesFromInputs() {
     let a = 3;
     
     for(let i=0; i<v; i++) {
-        arr[i] = parseInt(document.getElementsByTagName("input")[a].value);
-        a++;
+        let n = parseInt(document.getElementsByTagName("input")[a].value);
+        if(!arr.includes(n)) {
+            arr[i] = n;
+            a++;
+        }
     }
 
-    calc(arr, 5);  // param de tamanho do jogo
+    if(arr.length == v) {
+        calc(arr, 5);  // param de tamanho do jogo
+    } else {
+        alert("Existem 2 ou mais campos com o mesmo valor!");
+    }
 }
 
 function calc(arr, tamanhoJogo) {
@@ -100,9 +107,8 @@ function calc(arr, tamanhoJogo) {
     
     /****** RESTRIÇÕES ******/
     function checkDuplicates(result, arr, n) {  // Identificar jogos q tenham n valores iguais
-        let duplicate = false, a=0;
+        let duplicate = false;
         for(let item of result) {  // Isola cada array do result
-            a++;
             let c=0;
             for(let i=0; i<arr.length; i++) {
                 if(item.includes(arr[i])) {
@@ -130,11 +136,12 @@ function calc(arr, tamanhoJogo) {
         for(let i=0; i<combination.length; i++) {
             temp[i] = arr[combination[i]-1];
         }
-        if(!checkDuplicates(result, temp, n)) {  // remover jogos com n valores iguais   
-            temp.sort(function(a, b) { return a-b; });
+        if(!checkDuplicates(result, temp, n)) {  // Remover jogos com n valores iguais
+            temp.sort((a, b) => a-b);
             result.push(temp);
         }
     }
+    result.sort(function(a, b) { return (a[0] === b[0]) ? ((a[1] === b[1]) ? a[2]-b[2] : a[1]-b[1]) : a[0]-b[0]; });
 
     table(result, result.length, result.length*Math.abs(document.getElementById("preco").value));
 }
@@ -155,5 +162,6 @@ function table(array, total, totalPrice) {
         var cell3 = row.insertCell(2);
         cell3.innerHTML = "<form><input type='checkbox'></form>";  
     }
+    
     tabela.appendChild(tbody);
 }
