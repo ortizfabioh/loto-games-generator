@@ -74,6 +74,7 @@ function getValuesFromInputs() {
 
     let arr = [];
     var v = document.getElementById("qtd").value;
+    var n = parseInt(document.getElementById("lotoType").value);
     let a = 3;
     
     for(let i=0; i<v; i++) {
@@ -85,7 +86,7 @@ function getValuesFromInputs() {
     }
 
     if(arr.length == v) {
-        calc(arr, 5);  // param de tamanho do jogo
+        calc(arr, n);  // param de tamanho do jogo
     } else {
         alert("Existem 2 ou mais campos com o mesmo valor!");
     }
@@ -162,6 +163,10 @@ function table(array, total, totalPrice) {
         var cell3 = row.insertCell(2);
         cell3.innerHTML = "<form><input type='checkbox'></form>";  
     }
+
+    var r = tbody.insertRow(-1);  // Final da tabela
+    var c = r.insertCell();
+    c.innerHTML = "<form><input type='button' value='Salvar tabela'></form>";
     
     tabela.appendChild(tbody);
 }
