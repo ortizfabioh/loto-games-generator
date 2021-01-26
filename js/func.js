@@ -27,7 +27,7 @@ function sendData() {
         
         form.appendChild(input);
     }
-
+    
     form.appendChild(br.cloneNode());
     form.appendChild(br.cloneNode());
     var radio1 = document.createElement("input");
@@ -53,6 +53,18 @@ function sendData() {
     label2.innerHTML = "Remover jogos com <strong>4</strong> valores iguais";
     form.appendChild(radio2);
     form.appendChild(label2);
+
+    form.appendChild(br.cloneNode());
+    var radio3 = document.createElement("input");
+    radio3.setAttribute("type", "radio");
+    radio3.setAttribute("id", "radio3");
+    radio3.setAttribute("name", "number");
+    radio3.setAttribute("value", "0");
+    var label3 = document.createElement("label");
+    label3.setAttribute("for", "radio3");
+    label3.innerHTML = "Listar todos os jogos";
+    form.appendChild(radio3);
+    form.appendChild(label3);
 
     form.appendChild(br.cloneNode());
     form.appendChild(br.cloneNode());
@@ -137,9 +149,14 @@ function calc(arr, tamanhoJogo) {
         for(let i=0; i<combination.length; i++) {
             temp[i] = arr[combination[i]-1];
         }
-        if(!checkDuplicates(result, temp, n)) {  // Remover jogos com n valores iguais
+        if(n == 0) {
             temp.sort((a, b) => a-b);
             result.push(temp);
+        } else {
+            if(!checkDuplicates(result, temp, n)) {  // Remover jogos com n valores iguais
+                temp.sort((a, b) => a-b);
+                result.push(temp);
+            }
         }
     }
     result.sort(function(a, b) { return (a[0] === b[0]) ? ((a[1] === b[1]) ? a[2]-b[2] : a[1]-b[1]) : a[0]-b[0]; });
