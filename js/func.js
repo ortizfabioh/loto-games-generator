@@ -181,9 +181,5 @@ function table(array, total, totalPrice) {
         cell3.innerHTML = "<form><input type='checkbox'></form>";  
     }
 
-    var r = tbody.insertRow(-1);  // Final da tabela
-    var c = r.insertCell();
-    c.innerHTML = "<form><input type='button' value='Salvar tabela'></form>";
-    
     tabela.appendChild(tbody);
 }
