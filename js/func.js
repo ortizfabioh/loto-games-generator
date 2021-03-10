@@ -30,40 +30,44 @@ function sendData() {
     
     form.appendChild(br.cloneNode());
     form.appendChild(br.cloneNode());
-    var radio1 = document.createElement("input");
-    radio1.setAttribute("type", "radio");
-    radio1.setAttribute("id", "radio1");
-    radio1.setAttribute("name", "number");
-    radio1.setAttribute("value", "3");
-    radio1.setAttribute("checked", "");
+    var chk1 = document.createElement("input");
+    chk1.setAttribute("type", "checkbox");
+    chk1.setAttribute("id", "chk1");
+    chk1.setAttribute("name", "restrictions");
+    chk1.setAttribute("value", "seqValues");
+    chk1.setAttribute("onclick", "uncheckOthers()");
+    chk1.setAttribute("checked", "");
     var label1 = document.createElement("label");
-    label1.setAttribute("for", "radio1");
-    label1.innerHTML = "Remover jogos com <strong>3</strong> valores iguais";
-    form.appendChild(radio1);
+    label1.setAttribute("for", "chk1");
+    label1.innerHTML = " Remover jogos com <strong>3</strong> valores seguidos";
+    form.appendChild(chk1);
     form.appendChild(label1);
-    
-    form.appendChild(br.cloneNode());
-    var radio2 = document.createElement("input");
-    radio2.setAttribute("type", "radio");
-    radio2.setAttribute("id", "radio2");
-    radio2.setAttribute("name", "number");
-    radio2.setAttribute("value", "4");
-    var label2 = document.createElement("label");
-    label2.setAttribute("for", "radio2");
-    label2.innerHTML = "Remover jogos com <strong>4</strong> valores iguais";
-    form.appendChild(radio2);
-    form.appendChild(label2);
 
     form.appendChild(br.cloneNode());
-    var radio3 = document.createElement("input");
-    radio3.setAttribute("type", "radio");
-    radio3.setAttribute("id", "radio3");
-    radio3.setAttribute("name", "number");
-    radio3.setAttribute("value", "0");
+    var chk2 = document.createElement("input");
+    chk2.setAttribute("type", "checkbox");
+    chk2.setAttribute("id", "chk2");
+    chk2.setAttribute("name", "restrictions");
+    chk2.setAttribute("value", "oddEvenValues");
+    chk2.setAttribute("onclick", "uncheckOthers()");
+    chk2.setAttribute("checked", "");
     var label3 = document.createElement("label");
-    label3.setAttribute("for", "radio3");
-    label3.innerHTML = "Listar todos os jogos";
-    form.appendChild(radio3);
+    label3.setAttribute("for", "chk2");
+    label3.innerHTML = " Remover jogos com todos valores pares/ímpares";
+    form.appendChild(chk2);
+    form.appendChild(label3);
+
+    form.appendChild(br.cloneNode());
+    var chk3 = document.createElement("input");
+    chk3.setAttribute("type", "checkbox");
+    chk3.setAttribute("id", "chk3");
+    chk3.setAttribute("name", "restrictions");
+    chk3.setAttribute("value", "all");
+    chk3.setAttribute("onclick", "uncheckOthers()");
+    var label3 = document.createElement("label");
+    label3.setAttribute("for", "chk3");
+    label3.innerHTML = " Listar todos os jogos";
+    form.appendChild(chk3);
     form.appendChild(label3);
 
     form.appendChild(br.cloneNode());
@@ -119,28 +123,23 @@ function calc(arr, tamanhoJogo) {
     }
     
     /****** RESTRIÇÕES ******/
-    function checkDuplicates(result, arr, n) {  // Identificar jogos q tenham n valores iguais
-        let duplicate = false;
-        for(let item of result) {  // Isola cada array do result
-            let c=0;
-            for(let i=0; i<arr.length; i++) {
-                if(item.includes(arr[i])) {
-                    if(++c == n) {
-                        duplicate = true;  // é duplicado
-                        break;
-                    }
-                }
+    function checkSequences(arr) {  // Checa se o jogo possui alguma sequência de 3 valores seguidos
+        for(let i=0; i<(arr.length-2); i++) {
+            if(arr[i+1] == arr[i]+1 && arr[i+2] == arr[i]+2){
+                return true
             }
         }
-        return duplicate;
+        return false
+    }
+
+    function checkOddEven(arr) {  // Checa se o jogo contém só pares ou só ímpares
+        return arr.every((el) => el%2==0) || arr.every((el) => el%2==1);
     }
     /****** //RESTRIÇÕES ******/
     
-    var radioChecked = document.getElementsByName("number");
-    let n;
-    for(let i=0; i<radioChecked.length; i++) {
-        if(radioChecked[i].checked) { n = parseInt(radioChecked[i].value); }
-    }
+    var chk1 = document.getElementById("chk1").checked;
+    var chk2 = document.getElementById("chk2").checked;
+    var chk3 = document.getElementById("chk3").checked;
     
     let result = [];
     // Transcreve o array de índices para os valores do usuário
@@ -149,14 +148,23 @@ function calc(arr, tamanhoJogo) {
         for(let i=0; i<combination.length; i++) {
             temp[i] = arr[combination[i]-1];
         }
-        if(n == 0) {
-            temp.sort((a, b) => a-b);
+
+        temp.sort((a, b) => a-b);
+        if(chk3) {
             result.push(temp);
-        } else {
-            if(!checkDuplicates(result, temp, n)) {  // Remover jogos com n valores iguais
-                temp.sort((a, b) => a-b);
-                result.push(temp);
+        }
+        if(chk1 || chk2) {
+            if(chk1) {
+                if(checkSequences(temp)) {
+                    continue;
+                }
             }
+            if(chk2) {
+                if(checkOddEven(temp)) {
+                    continue;
+                }
+            }
+            result.push(temp);
         }
     }
     result.sort(function(a, b) { return (a[0] === b[0]) ? ((a[1] === b[1]) ? a[2]-b[2] : a[1]-b[1]) : a[0]-b[0]; });
@@ -182,4 +190,17 @@ function table(array, total, totalPrice) {
     }
 
     tabela.appendChild(tbody);
+}
+
+function uncheckOthers() {
+    chk1 = document.getElementById("chk1");
+    chk2 = document.getElementById("chk2");
+    chk3 = document.getElementById("chk3");
+    if(chk3.checked) {
+        chk1.checked = false;
+        chk2.checked = false;
+    }
+    if(chk1.checked || chk2.checked) {
+        chk3.checked = false;
+    }
 }
